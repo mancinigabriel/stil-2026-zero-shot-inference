@@ -1,0 +1,51 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.vrb
+*.dvi
+*.ps
+*.idx
+*.ilg
+*.ind
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.xdv
+*.figlist
+*.makefile
+*.fls
+
+# latexindent backup
+*.bak*
+indent.log
+
+# build directory
+build/
+out/
+
+# editor / OS junk
+.DS_Store
+.vscode/*.log
+*.swp
+*~
+
+# keep VS Code shared settings
+!.vscode/settings.json
+!.vscode/extensions.json
