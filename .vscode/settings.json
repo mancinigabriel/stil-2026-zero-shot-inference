@@ -13,17 +13,17 @@
   "latex-workshop.latex.tools": [
     {
       "name": "latexmk",
-      "command": "latexmk",
+      "command": "/Library/TeX/texbin/latexmk",
       "args": ["-pdf","-synctex=1","-interaction=nonstopmode","-file-line-error","-halt-on-error","-outdir=%OUTDIR%","%DOC%"]
     },
     {
       "name": "pdflatex",
-      "command": "pdflatex",
+      "command": "/Library/TeX/texbin/pdflatex",
       "args": ["-synctex=1","-interaction=nonstopmode","-file-line-error","-output-directory=%OUTDIR%","%DOC%"]
     },
     {
       "name": "bibtex",
-      "command": "bibtex",
+      "command": "/Library/TeX/texbin/bibtex",
       "args": ["%OUTDIR%/%DOCFILE%"]
     }
   ],
