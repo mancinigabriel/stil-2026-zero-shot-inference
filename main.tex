@@ -184,15 +184,23 @@ acarretamento, a hipótese resulta da substituição de um hipônimo da premissa
 por seu hiperônimo (e.g., \emph{lateral-esquerdo} $\to$ \emph{jogador}); nos
 30 casos de não-acarretamento, a relação hipônimo-hiperônimo é violada ou
 invertida. Os pares foram gerados por GPT-5.2 a partir de \emph{prompt}
-restritivo e submetidos a revisão manual para assegurar alinhamento com a
-definição semântica formal. O modelo usado na geração não integra o conjunto
-avaliado.
+restritivo e submetidos a revisão manual, que verificou: (i) a correção
+gramatical das sentenças; (ii) a validade da relação hiponímica entre os
+termos substituídos; (iii) a ausência de outros mecanismos inferenciais além
+da inclusão lexical (e.g., negação, pressuposição ou implicatura); e (iv) a
+adequação dos casos de não-acarretamento, assegurando que a hipótese não
+decorra da premissa por nenhum outro mecanismo semântico formal. O modelo
+usado na geração não integra o conjunto avaliado.
 
 A inclusão desse conjunto justifica-se pela possibilidade de que modelos
 avaliados tenham tido acesso ao ASSIN~2 durante o treinamento, introduzindo
-vieses de familiaridade. Por construção, o dataset sintético elimina essa
-hipótese e isola a capacidade de generalização para inferências baseadas em
-inclusão lexical sem regularidades superficiais do \emph{benchmark}.
+vieses de familiaridade. Por construção, o dataset sintético isola o
+comportamento dos modelos em inferências baseadas em inclusão lexical, sem
+regularidades superficiais do \emph{benchmark}. Dado seu tamanho reduzido e
+escopo temático único (60 pares, domínio do futebol, fenômeno restrito à
+hiponímia/hiperonímia), o conjunto constitui uma prova de conceito
+metodológica para avaliação controlada --- e não uma avaliação abrangente do
+acarretamento semântico em sua totalidade.
 
 \subsection{Pipeline de avaliação}
 
@@ -343,17 +351,8 @@ acarretamento.
 
 \subsection{Dataset sintético: robustez sob controle semântico}
 
-A Figura~\ref{fig:accuracy_sintetico} e a Tabela~\ref{tab:sintetico} apresentam
-os resultados no dataset sintético, construído exclusivamente com pares baseados
-em hiponímia.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.90\textwidth]{figuras/grafico_acuracia_dados_sinteticos.png}
-    \caption{Acurácia global nos dados sintéticos. Linhas de referência iguais
-    às da Figura~\ref{fig:accuracy_assin2}.}
-    \label{fig:accuracy_sintetico}
-\end{figure}
+A Tabela~\ref{tab:sintetico} apresenta os resultados no dataset sintético,
+construído exclusivamente com pares baseados em hiponímia.
 
 \begin{table}[htbp]
 \centering
@@ -388,43 +387,88 @@ acaso puro, em pares construídos para isolar a relação semântica formal.
 
 \subsection{Discussão}
 
-\textbf{Dedução \emph{vs.} indução nos modelos.}\ A tipologia de Peirce oferece
-uma moldura interpretativa para os comportamentos observados. Modelos que
-colapsam para uma classe, Sabiá (sempre ``não acarreta''), Bode (sempre
-``acarreta''), Ministral-8B-Instruct (sempre ``não acarreta''), evidenciam
-que o processo indutivo de treinamento não se converteu em capacidade dedutiva
-estável. Esses modelos não verificam as condições de verdade da relação entre
-premissa e hipótese: operam como classificadores de similaridade global,
-usando a distribuição léxico-semântica como \emph{proxy} para a decisão
-inferencial. Esse comportamento reproduz as mesmas limitações das heurísticas
-simbólicas identificadas por~\cite{stil}: a distinção entre similaridade
-distribucional e preservação de condições de verdade permanece opaca para
-modelos sem mecanismos explícitos de raciocínio.
+\textbf{Padrões comportamentais e a distinção dedução/indução.}\ A tipologia
+de Peirce oferece uma moldura interpretativa para os comportamentos observados.
+Modelos que colapsam para uma classe --- Sabiá (sempre ``não acarreta''), Bode
+(sempre ``acarreta''), Ministral-8B-Instruct (sempre ``não acarreta'') ---
+apresentam padrões de resposta incompatíveis com a verificação das condições
+de verdade que define o acarretamento: a decisão permanece constante
+independentemente do conteúdo proposicional do par. Esse comportamento é
+observacionalmente consistente com o de classificadores baseados em viés de
+classe, nos quais a distribuição léxico-semântica atua como \emph{proxy} para
+a decisão inferencial em lugar de uma avaliação das relações lógicas entre
+premissa e hipótese. É importante ressaltar, contudo, que os experimentos
+medem exclusivamente comportamento observável em tarefas de classificação;
+inferir a partir dessas métricas a presença ou ausência de capacidades de
+raciocínio interno extrapola o que os dados permitem concluir diretamente.
+Esse comportamento reproduz as mesmas limitações das heurísticas simbólicas
+identificadas por~\cite{stil}: a distinção entre similaridade distribucional e
+preservação de condições de verdade permanece opaca para modelos sem
+mecanismos explícitos de raciocínio.
 
-\textbf{Raciocínio explícito como aproximação à dedução.}\ Os melhores modelos, Qwen3, Gemma~2 e variantes \emph{Reasoning} do Ministral, exibem
-comportamento mais consistente com a estrutura dedutiva da tarefa: mantêm alto
-desempenho tanto nas faixas de baixa similaridade (rejeição correta de pares
-dissimilares) quanto na faixa~5 (aceitação correta de paráfrases), e preservam
-essa robustez nos dados sintéticos. A \emph{Chain-of-Thought} e a destilação de
-conhecimento parecem funcionar como mecanismos que aproximam o comportamento
-indutivo dos modelos da verificação lógica de condições de verdade.
+\textbf{Raciocínio explícito e padrões de resposta mais robustos.}\ Os melhores
+modelos --- Qwen3, Gemma~2 e variantes \emph{Reasoning} do Ministral ---
+exibem padrões de resposta mais consistentes com os requisitos da tarefa:
+mantêm alto desempenho tanto nas faixas de baixa similaridade (rejeição
+correta de pares dissimilares) quanto na faixa~5 (aceitação correta de
+paráfrases), e preservam essa robustez nos dados sintéticos. Esses resultados
+sugerem que a \emph{Chain-of-Thought} e a destilação de conhecimento produzem
+representações comportamentais mais alinhadas à distinção entre acarretamento
+e similaridade distribucional --- embora não seja possível, a partir dos dados
+de classificação disponíveis, determinar se esse alinhamento resulta de
+raciocínio dedutivo genuíno ou de padrões aprendidos durante o treinamento que
+mimetizam esse comportamento.
 
 A comparação entre Qwen3-4B-Thinking (88,6\% no ASSIN~2 e 95,0\% no sintético)
 e Qwen3-4B-Instruct (90,8\% e 95,0\%) indica que o \emph{thinking mode}, embora
 marginalmente inferior no \emph{benchmark}, é igualmente robusto em dados
-controlados. A superioridade do modo \emph{instruct} no ASSIN~2 pode refletir
-uma exploração mais eficiente de padrões superficiais do \emph{benchmark}, e não
-necessariamente maior competência inferencial estrita.
+controlados. A superioridade do modo \emph{instruct} no ASSIN~2 pode sugerir
+exploração mais eficiente de padrões superficiais do \emph{benchmark}; contudo,
+dada a proximidade entre os valores (2,2 p.p.), essa diferença não deve ser
+interpretada sem análise de significância estatística.
 
 \textbf{A anomalia do Ministral-8B-Instruct.}\ A disparidade entre
 Ministral-3B-Instruct (88,0\%) e Ministral-8B-Instruct (44,5\%) é
-contra-intuitiva perante as leis de escala. A análise sugere que o alinhamento
-ODPO no modelo de 8B, ao otimizar concisão e segurança para assistentes de
-\emph{chat}, suprimiu a capacidade de raciocínio inferencial explícito. A
-destilação de \emph{logits} específica aplicada ao modelo de 3B, combinada com
-a arquitetura de \emph{tied embeddings}, mitigou esse efeito. O resultado indica
-que o alinhamento para fluência conversacional pode ser prejudicial à verificação
-lógica quando não acompanhado de cadeia de pensamento.
+contra-intuitiva perante as leis de escala. Com base nas informações do
+relatório técnico do Ministral~3~\cite{liu2026ministral3}, uma hipótese
+explicativa é que o processo de alinhamento ODPO no modelo de 8B, ao otimizar
+concisão e segurança para assistentes de \emph{chat}, possa ter suprimido
+padrões inferenciais mais elaborados --- enquanto a destilação de
+\emph{logits} específica aplicada ao modelo de 3B, combinada com a arquitetura
+de \emph{tied embeddings}, teria mitigado esse efeito. É imprescindível, no
+entanto, ressaltar que essa interpretação é especulativa: não há experimentos
+de ablação ou avaliações controladas neste trabalho destinados a verificá-la
+empiricamente. Estudos futuros com variações sistemáticas dos parâmetros de
+alinhamento seriam necessários para confirmar ou refutar a hipótese.
+
+\textbf{Análise qualitativa de erros.}\ A Tabela~\ref{tab:erros} ilustra como
+o colapso de classe se manifesta concretamente: Sabiá-7B nega o acarretamento
+mesmo quando a relação hiponímica é transparente (\emph{lateral-esquerdo}
+$\subset$ \emph{jogador}); Bode-7B afirma o acarretamento mesmo quando os
+predicados são de classes incompatíveis (\emph{meia} $\not\to$ \emph{árbitro}).
+O erro não decorre de dificuldades com o vocabulário, mas de viés decisório
+independente do conteúdo semântico do par.
+
+\begin{table}[htbp]
+\centering
+\caption{Predições corretas (\checkmark) e incorretas (\texttimes) no dataset
+sintético.}
+\label{tab:erros}
+\small
+\begin{tabular}{p{3.5cm}p{3.5cm}ccc}
+\toprule
+\textbf{Premissa} & \textbf{Hipótese} & \textbf{Rótulo} &
+\textbf{Sabiá} & \textbf{Bode} \\
+\midrule
+O lateral-esq.\ sofreu a falta. &
+O jogador sofreu a falta. &
+acarret. & \texttimes & \checkmark \\
+O meia organizou o meio-campo. &
+O árbitro organizou o meio-campo. &
+não-acarret. & \checkmark & \texttimes \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \textbf{\emph{Zero-shot} \emph{vs.} supervisionado.}\ O Qwen3-4B-Instruct
 (90,8\%) iguala o BERTimbau-large ajustado supervisionadamente no ASSIN~2
@@ -434,8 +478,7 @@ o custo de anotação manual. A diferença reside no custo de inferência: o
 BERTimbau-large opera com $\sim$335M parâmetros e pode rodar em hardware de
 entrada; o Qwen3-4B, mesmo quantizado, exige GPUs de pelo menos 8GB de VRAM.
 Para cenários de prototipagem rápida ou escassez de dados anotados, os LLMs
-\emph{zero-shot} oferecem, portanto, uma alternativa viável ao ciclo custo-
-oso de anotação e treinamento supervisionado.
+\emph{zero-shot} oferecem, portanto, uma alternativa viável ao ciclo custoso de anotação e treinamento supervisionado.
 
 \section{Conclusão}
 
@@ -456,10 +499,24 @@ similaridade distribucional. Acurácia elevada no ASSIN~2 pode, portanto,
 superestimar a competência inferencial quando não verificada em dados construídos
 sob restrição semântica estrita.
 
-Como trabalhos futuros, vislumbra-se a extensão do dataset sintético para outros
-fenômenos da semântica formal além da inclusão lexical, como acarretamento por
-predicação e por operadores modais, e a avaliação em regime \emph{few-shot}
-para quantificar o ganho decorrente de exemplos explícitos.
+As principais limitações são: (i) o dataset sintético (60 pares, hiponímia)
+constitui uma prova de conceito de escopo restrito, não generalizável ao
+acarretamento em sua totalidade; (ii) os experimentos avaliam comportamento
+observável em classificação binária --- inferir a presença de raciocínio
+dedutivo interno a partir dessas métricas extrapola o que os dados permitem
+concluir diretamente; (iii) comparações entre modelos de desempenho próximo
+(e.g., 90,8\% \emph{vs.} 89,0\%) carecem de testes de significância
+estatística; e (iv) as interpretações causais sobre modelos específicos
+(notadamente o Ministral-8B-Instruct) são hipóteses baseadas em relatórios
+técnicos, não verificadas empiricamente neste estudo.
+
+Como trabalhos futuros, vislumbra-se: a ampliação do dataset sintético para
+outros fenômenos da semântica formal (negação, quantificação, pressuposição,
+predicação, operadores modais); a inclusão de testes de significância
+estatística para comparações entre modelos; a realização de estudos de ablação
+para investigar as causas do colapso em modelos específicos; e a avaliação em
+regime \emph{few-shot} para quantificar o ganho decorrente de exemplos
+explícitos.
 
 \bibliographystyle{sbc}
 \bibliography{refs}

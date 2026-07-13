@@ -14,7 +14,7 @@
     {
       "name": "latexmk",
       "command": "/Library/TeX/texbin/latexmk",
-      "args": ["-pdf","-synctex=1","-interaction=nonstopmode","-file-line-error","-halt-on-error","-outdir=%OUTDIR%","%DOC%"]
+      "args": ["-pdf", "-outdir=%OUTDIR%", "%DOC%"]
     },
     {
       "name": "pdflatex",
